@@ -144,23 +144,6 @@ npm run test:watch
 
 Also consider adding ESLint and Prettier for consistent code style.
 
-## Deployment
 
-Recommendations for deployment:
 
-- Use a process manager (PM2 or systemd) or containerize with Docker.
-- Provide environment variables securely via your hosting provider.
-- Use managed MongoDB and Redis for reliability.
-- Store Firebase and AWS credentials in a secure secrets store.
 
-## Contributing
-
-Contributions are welcome. Please open issues or pull requests. Follow the repository conventions and add unit tests for new features.
-
-## License
-
-This project is provided under the ISC license as declared in `package.json`.
-
----
-
-If you'd like, I can also generate a Postman collection or Swagger/OpenAPI spec for the available endpoints. Want me to add that next?
