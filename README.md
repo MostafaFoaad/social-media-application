@@ -1,143 +1,238 @@
-# Chat App — Backend (Part 1)
+# Social Media Application
 
-A concise, production-ready backend for a chat application, built with TypeScript, Express, MongoDB (Mongoose), Redis, and Firebase Admin. This repository contains core modules for authentication, user management, and posts, plus utilities for email, file uploads (S3), and token management.
+## Overview
 
-## Table of Contents
+Social Media Application is a TypeScript-based backend for a social networking platform. It provides REST APIs for authentication, user profiles, and posts. Media uploads are handled via AWS S3 utilities, with caching handled by Redis, and push notifications via Firebase Admin.
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Scripts](#scripts)
-- [Running the App](#running-the-app)
-- [API Overview](#api-overview)
-- [Architecture & Services](#architecture--services)
-- [Testing & Linting](#testing--linting)
-
-
-## Features
-
-- Authentication with JWT and refresh tokens
-- User management endpoints
-- Post creation and retrieval
-- File upload support via AWS S3
-- Email notifications (nodemailer + templating)
-- Redis support for caching / session-like usage
-- Firebase Admin integration for push notifications
+---
 
 ## Tech Stack
 
-- Node.js + TypeScript
-- Express (v5)
+- Node.js / TypeScript
+- Express.js
 - MongoDB (Mongoose)
-- Redis
-- AWS S3 (via AWS SDK v3)
-- Firebase Admin SDK
-- Zod for validation
+- Redis (session/caching)
+- AWS S3 (media storage)
+- Multer (multipart uploads)
+- Firebase Admin (push notifications)
+- Zod (validation)
+- JWT (authentication)
+- Nodemailer (email)
+- Security & utilities: CORS, bcrypt password hashing
 
-## Project Structure
+---
 
-Top-level layout (src):
+## Major Features
 
-- `src/main.ts` — application entry
-- `src/app.bootstrap.ts` — app bootstrap and wiring
-- `src/modules/` — feature modules (`auth`, `user`, `post`)
-- `src/common/` — shared code (services, utils, enums, middleware)
-- `src/DB/` — database connection, models, repositories
+- **Authentication (authModule)**  
+  Signup, login, email verification, token rotation, JWT-based authentication.
 
-See the `src` folder for details and module-level README patterns.
+- **User Management (userModule)**  
+  User profiles, profile retrieval, profile deletion, avatar and cover uploads.
 
-## Prerequisites
+- **Posts (postModule)**  
+  Create, read, update posts with validation, media attachment handling, and post reactions.
 
-- Node.js >= 18
-- npm (or yarn)
-- MongoDB instance (local or remote)
-- Redis instance (local or remote)
-- AWS credentials if using S3 uploads
-- Firebase service account JSON (used by Firebase Admin)
+- **Uploads & Storage**  
+  AWS S3 helpers, pre-signed upload URLs, and cloud Multer configuration.
 
-## Installation
+- **Caching & Real-time Integration**  
+  Redis initialization for token management/caching and Firebase notifications.
 
-Clone the repo and install dependencies:
+- **Email**  
+  Confirmation codes and email delivery using Nodemailer.
 
-```bash
-git clone <repo-url>
-cd chat-app-part1
-npm install
+---
+
+## Application Flow
+
+- `src/main.ts` starts the application.
+- `app.bootstrap.ts`:
+  - Applies security middlewares (CORS) and JSON parsing
+  - Initializes Database and Redis connections
+  - Registers REST routes (`/auth`, `/user`, `/post`)
+  - Configures utility routes (AWS S3 file streaming and pre-signed assets)
+  - Registers the global error handler
+- `src/modules/index.ts` mounts all feature routers and exports them.
+
+---
+
+## Full Project Structure
+
+```
+SOCIAL_APP/
+├── .gitignore
+├── README.md
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── dist/                          # Compiled JavaScript output
+└── src/
+    ├── app.bootstrap.ts           # App bootstrap, middlewares
+    ├── main.ts                    # App entry point
+    ├── config/
+    │   └── config.ts              # Environment variables
+    ├── DB/
+    │   ├── connection.db.ts       # MongoDB connection
+    │   ├── repository/
+    │   │   ├── base.repository.ts
+    │   │   ├── post.repository.ts
+    │   │   └── user.repository.ts
+    │   └── model/
+    │       ├── post.model.ts
+    │       └── user.model.ts
+    ├── common/
+    │   ├── enums/                 # email, multer, post, token, user enums
+    │   ├── exceptions/            # application, domain exceptions
+    │   ├── interfaces/            # pagination, post, user interfaces
+    │   ├── response/              # success response formatters
+    │   ├── services/
+    │   │   ├── notification.service.ts
+    │   │   ├── redis.service.ts
+    │   │   ├── s3.service.ts
+    │   │   └── token.service.ts
+    │   ├── types/
+    │   ├── utils/
+    │   │   ├── email/             # email templates, sending utilities
+    │   │   ├── multer/            # cloud multer configuration
+    │   │   └── security/          # encryption and hashing
+    │   └── validation/            # general validation schemas
+    ├── middleware/
+    │   ├── authentication.middleware.ts
+    │   ├── authorization.middleware.ts
+    │   ├── error.middleware.ts
+    │   └── validation.middleware.ts
+    └── modules/
+        ├── index.ts               # Export all routers
+        ├── auth/
+        │   ├── auth.controller.ts
+        │   ├── auth.dto.ts
+        │   ├── auth.entity.ts
+        │   ├── auth.service.ts
+        │   └── auth.validation.ts
+        ├── post/
+        │   ├── post.controller.ts
+        │   ├── post.dto.ts
+        │   ├── post.service.ts
+        │   └── post.validation.ts
+        └── user/
+            ├── user.controller.ts
+            └── user.service.ts
 ```
 
-## Configuration
+## Environment Variables
 
-Configuration is controlled via environment variables and the `config/` folder.
+Create `.env.development`
 
-Common environment variables (adjust to your environment):
+```
+NODE_ENV=development
+PORT=7000
+APPLICATION_NAME=SocialApp
 
-- `PORT` — application port (default: `3000`)
-- `NODE_ENV` — `development` | `production`
-- `MONGO_URI` — MongoDB connection string
-- `REDIS_URL` — Redis connection URL
-- `JWT_SECRET` — JWT signing secret
-- `JWT_ACCESS_EXPIRES_IN` — access token TTL
-- `JWT_REFRESH_EXPIRES_IN` — refresh token TTL
-- `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME` — for S3
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` — for sending email
-- `FIREBASE_SERVICE_ACCOUNT` — path to Firebase service account JSON (or provide via `config/`)
+DB_URI=mongodb://localhost:27017/social_app
+REDIS_URI=redis://localhost:6379
 
-The repository includes a Firebase service account JSON under `config/` for local testing. Replace it with your production credentials as appropriate.
+SALT_ROUND=10
+IV_LENGTH=16
+ENC_SECRET_KEY=your_encryption_secret
 
-## Scripts
+USER_ACCESS_TOKEN_SECRET_KEY=your_user_access_secret
+USER_REFRESH_TOKEN_SECRET_KEY=your_user_refresh_secret
+SYSTEM_ACCESS_TOKEN_SECRET_KEY=your_system_access_secret
+SYSTEM_REFRESH_TOKEN_SECRET_KEY=your_system_refresh_secret
+ACCESS_TOKEN_EXPIRES_IN=1800
+REFRESH_TOKEN_EXPIRES_IN=86400
 
-Available npm scripts defined in `package.json`:
+EMAIL_APP=you@example.com
+EMAIL_APP_PASSWORD=your_app_password
 
-- `npm run start:dev` — Run in development (TypeScript watch + node watch)
-- `npm run start:prod` — Run in production mode
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_aws_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret
+AWS_BUCKET_NAME=your_bucket_name
+AWS_EXPIRES_IN=120
 
-Example (development):
+FACEBOOK_LINK=https://facebook.com/yourpage
+TWITTER_LINK=https://twitter.com/yourpage
+INSTEGRAM_LINK=https://instagram.com/yourpage
+AUDIENCE=your_audience_identifier
+```
+
+---
+
+## How to Run
 
 ```bash
+npm install
 npm run start:dev
 ```
 
-## Running the App
+Server runs on `http://localhost:PORT`. To run in production, use `npm run start:prod`.
 
-1. Ensure MongoDB and Redis are accessible and environment variables are set.
-2. Install dependencies (`npm install`).
-3. Start in development: `npm run start:dev`.
+---
 
-The server entrypoint is `src/main.ts` and compiled output is `dist/` when TypeScript runs.
+## API Routes
 
-## API Overview
+All routes are mounted in `src/app.bootstrap.ts`.
 
-This backend provides REST endpoints for authentication, users, and posts. High-level routes are grouped in modules under `src/modules`.
+### Base Routes
 
-- `POST /auth/register` — register a new user
-- `POST /auth/login` — obtain access and refresh tokens
-- `POST /auth/refresh` — refresh tokens
-- `GET /users/:id` — get user profile
-- `POST /posts` — create a post (auth required)
-- `GET /posts` — list posts
-
-Refer to the controllers in `src/modules/*/*.controller.ts` for full request/response schemas and validation rules.
-
-## Architecture & Services
-
-- `src/common/services/redis.service.ts` — Redis client abstraction
-- `src/common/services/s3.service.ts` — S3 upload utilities
-- `src/common/services/token.service.ts` — JWT handling
-- `src/common/services/notification.service.ts` — email & Firebase notifications
-- `src/DB/repository/` — repository layer for DB operations
-
-The app uses middleware for authentication, authorization, validation, and error handling located in `src/middleware/`.
-
-## Testing & Linting
-
-This repository does not include a test suite by default. To add tests consider using Jest or Vitest and add scripts:
-
-```bash
-npm run test
-npm run test:watch
+```
+/auth
+/user
+/post
+/uploads
+/pre-signed
 ```
 
-Also consider adding ESLint and Prettier for consistent code style.
+### Auth Routes (`/auth`)
+
+| Method | Endpoint                     | Description               |
+| ------ | ---------------------------- | ------------------------- |
+| POST   | `/auth/signup`               | Register user             |
+| POST   | `/auth/login`                | Login                     |
+| PATCH  | `/auth/confirm-email`        | Confirm email using token |
+| PATCH  | `/auth/resend-confirm-email` | Resend confirmation email |
+
+### User Routes (`/user`)
+
+| Method | Endpoint                     | Description              |
+| ------ | ---------------------------- | ------------------------ |
+| GET    | `/user`                      | Get current user profile |
+| PATCH  | `/user/profile-image`        | Update profile image     |
+| PATCH  | `/user/profile-cover-images` | Update cover images      |
+| DELETE | `/user`                      | Delete user profile      |
+| POST   | `/user/logout`               | Logout                   |
+| POST   | `/user/rotate-token`         | Rotate refresh token     |
+
+### Post Routes (`/post`)
+
+| Method | Endpoint              | Description               |
+| ------ | --------------------- | ------------------------- |
+| GET    | `/post`               | Get paginated posts       |
+| POST   | `/post`               | Create post + attachments |
+| PATCH  | `/post/:postId`       | Update post + attachments |
+| PATCH  | `/post/:postId/react` | React/Unreact to post     |
+
+### Utility Routes
+
+| Method | Endpoint             | Description                            |
+| ------ | -------------------- | -------------------------------------- |
+| GET    | `/uploads/*path`     | Stream S3 assets (supports `download`) |
+| GET    | `/pre-signed/*path`  | Generate S3 pre-signed upload link     |
+| POST   | `/send-notification` | Push notification test endpoint        |
+
+---
+
+## Security Notes
+
+- JWT-based authentication (access & refresh tokens with rotation)
+- Password hashing with bcrypt
+- Data validation enforced using Zod
+- AWS S3 resources secured behind pre-signed URL generation
+
+---
+
+## License
+
+ISC
