@@ -15,9 +15,7 @@ A concise, production-ready backend for a chat application, built with TypeScrip
 - [API Overview](#api-overview)
 - [Architecture & Services](#architecture--services)
 - [Testing & Linting](#testing--linting)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Features
 
@@ -143,7 +141,3 @@ npm run test:watch
 ```
 
 Also consider adding ESLint and Prettier for consistent code style.
-
-
-
-
