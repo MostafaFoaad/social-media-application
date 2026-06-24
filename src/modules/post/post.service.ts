@@ -38,7 +38,10 @@ export class PostService{
                     ...(search?{content:{$regex:search,$options:"i"}}:{})
                 },
                 page,
-                size
+                size,
+                options:{
+                    populate:[{path:"comments",populate:{path:"reply",populate:{ path:"reply", }}}],
+                }
             })
 
             return posts;

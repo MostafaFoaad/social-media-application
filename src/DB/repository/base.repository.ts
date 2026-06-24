@@ -1,6 +1,7 @@
 import type { AnyKeys, CreateOptions, DeleteResult, FlattenMaps, HydratedDocument, Model, ProjectionType, QueryFilter, QueryOptions, ReturnsNewDoc, UpdateQuery } from "mongoose";
 //import type { IUser } from "../../common/interfaces/user.interface.js";
 import type { IPaginate } from "../../common/interfaces/pagination.interface.js";
+import type { PopulateOptions } from "mongoose";
 
 export class DatabaseRepository<TRowDoc>{
     constructor(protected readonly model:Model<TRowDoc>){}
@@ -34,7 +35,7 @@ export class DatabaseRepository<TRowDoc>{
     }:{
         filter?:QueryFilter<TRowDoc>,
         projection?:ProjectionType<TRowDoc>|null|undefined,
-        options?:QueryOptions<TRowDoc>&{lean:false}|null|undefined
+        options?:QueryOptions<TRowDoc>&{lean?:false}|null|undefined
 
     }):Promise<HydratedDocument<TRowDoc>|null>
 
@@ -45,7 +46,7 @@ export class DatabaseRepository<TRowDoc>{
     }:{
         filter?:QueryFilter<TRowDoc>,
         projection?:ProjectionType<TRowDoc>|null|undefined,
-        options?:QueryOptions<TRowDoc>&{lean:true}|null|undefined
+        options?:QueryOptions<TRowDoc>&{lean?:true}|null|undefined
 
     }):Promise<null|FlattenMaps<TRowDoc>>
 
@@ -77,7 +78,7 @@ export class DatabaseRepository<TRowDoc>{
 
     }):Promise<HydratedDocument<TRowDoc>[]>{
         const doc=this.model.find(filter,projection)
-
+        if(options?.populate) doc.populate(options.populate as PopulateOptions[])
         if(options?.lean) doc.lean(options.lean)
         if(options?.skip) doc.skip(options.skip)
         if(options?.limit) doc.limit(options.limit)    

@@ -1,22 +1,21 @@
 import { model, Types} from "mongoose";
 import { Schema } from "mongoose";
-import type { IPost} from "../../common/interfaces/index.js";
-import { AvailabilityEnum} from "../../common/enums/index.js";
+import type { IComment} from "../../common/interfaces/index.js";
 
-
-const postSchema=new Schema<IPost>({
-    folderId:{type:String,required:true},
+const commentSchema=new Schema<IComment>({
 
     content:{type:String,required:function(this){
         return this.attachments?.length}},
 
     attachments:{type:[String]},
 
-    availability:{type:Number,enum:AvailabilityEnum,default:AvailabilityEnum.PUBLIC},
-
     likes:[{type:Types.ObjectId,ref:"User"}],
 
     tags:[{type:Types.ObjectId,ref:"User"}],
+
+    postId:{type:Types.ObjectId,ref:"Post",required:true},
+
+    commentId:{type:Types.ObjectId,ref:"Comment"},
 
     updatedBy:[{type:Types.ObjectId,ref:"User"}],
 
@@ -32,15 +31,17 @@ const postSchema=new Schema<IPost>({
     toJSON:{virtuals:true},
     strict:true,
     strictQuery:true,
-    collection:"SOCIAL_APP_POSTS"
+    collection:"SOCIAL_APP_COMMENTS"
 })
 
-postSchema.virtual("comments",{
+commentSchema.virtual("reply",{
     localField:"_id",
-    foreignField:"postId",
+    foreignField:"commentId",
     ref:"Comment",
     justOne:true,
 })
 
 
-export const PostModel = model<IPost>("Post",postSchema);
+
+
+export const CommentModel = model<IComment>("Comment",commentSchema);

@@ -51,17 +51,17 @@ class UserService{
     } */
 
         async profileImage({ ContentType,originalName}:{ContentType:string,originalName:string},user:HydratedDocument<IUser>):Promise<{user:IUser,url:string}>{
-        //const oldPic=user.profilePicture;    
+        const oldPic=user.profilePicture;    
         const {url,Key}=await this.s3.createPreSignedUploadLink({
             path:`Users/${user._id.toString()}/Profile`,
             ContentType,
             originalName
         })
-        //user.profilePicture=Key as string;
-        //await user.save();
-        //if(oldPic){
-          //  await this.s3.deleteAsset({Key:oldPic})
-        //}
+        user.profilePicture=Key as string;
+        await user.save();
+        if(oldPic){
+            await this.s3.deleteAsset({Key:oldPic})
+        }
         return {user,url}
     }
 

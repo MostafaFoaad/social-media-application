@@ -8,7 +8,10 @@ import { validation } from "../../middleware/validation.middleware.js";
 import { postService } from "./post.service.js";
 import { paginationValidationSchema, type PaginateDto } from "../../common/validation/general.validation.js";
 import type { ReactPostParamsDto, ReactPostQueryDto, UpdatePostBodyDto, UpdatePostParamsDto } from "./post.dto.js";
+import { commentRouter } from "../comment/index.js";
 const router=Router();
+
+router.use("/:postId/comment",commentRouter);
 
 router.get("/",
     authentication(),

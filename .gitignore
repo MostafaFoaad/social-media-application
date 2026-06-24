@@ -2,5 +2,6 @@
 .env.production
 node_modules
 dist/
+c45-second-app-firebase-adminsdk-fbsvc-24114559de.json
 .vscode
 
