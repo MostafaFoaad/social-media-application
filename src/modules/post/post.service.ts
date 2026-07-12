@@ -40,7 +40,7 @@ export class PostService{
                 page,
                 size,
                 options:{
-                    populate:[{path:"comments",populate:{path:"reply",populate:{ path:"reply", }}}],
+                     populate:[{path:"likes"},{path:"updatedBy"},{path:"tags"},{path:"createdBy"},{path:"comments",populate:{path:"reply",populate:{ path:"reply", }}}]
                 }
             })
 
@@ -236,7 +236,10 @@ export class PostService{
                 },
                 update:{
                     ...(Number(react)>0?{$addToSet:{likes:user._id}}:{$pull:{likes:user._id}})
-                }
+                },
+                populate:[{path:"likes"},{path:"updatedBy"},{path:"tags"},{path:"createdBy"},{path:"comments",populate:{path:"reply",populate:{ path:"reply", }}}]
+
+                
             })
 
             if(!post){

@@ -9,7 +9,7 @@ import { s3Service, type S3Service } from "../../common/services/s3.service.js";
 import { StorageApproachEnum, UploadApproachEnum } from "../../common/enums/multer.enum.js";
 import { UserRepository } from "../../DB/repository/user.repository.js";
 
-class UserService{
+export class UserService{
         private readonly redis:RedisService;
         private readonly tokenService:TokenService
         private readonly userRepository:UserRepository
@@ -67,6 +67,8 @@ class UserService{
 
     async profile(user:HydratedDocument<IUser>):Promise<any>{
         return user.toJSON()
+        /* const data=await this.userRepository.findOne({options:{populate:[{path: "friends"}]}}) as HydratedDocument<IUser>
+        return data .toJSON() */
     }
 
     async logout({flag}:{flag:LogoutEnum},user:HydratedDocument<IUser>,{jti,iat,sub}:{jti:string,iat:number,sub:string}):Promise<number>{

@@ -1,5 +1,21 @@
+import { error } from "node:console";
 import { ApplicationException } from "./application.exception.js";
+import { GraphQLError } from "graphql";
 
+
+export const gqlErrors=(error:ApplicationException)=>{
+    throw new GraphQLError(
+        error.message||"InternalServerError",
+        {
+            extensions:{
+            statusCode:error.statusCode||500,
+            cause:error.cause
+        }
+        }
+        
+        
+    )
+}
 export class ConflictException extends ApplicationException{
     constructor(message:string="Conflict",cause?:unknown){
         super(message,409,cause)

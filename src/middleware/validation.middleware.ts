@@ -1,6 +1,6 @@
 import type { Request,Response,NextFunction } from "express";
 import type { ZodError, ZodType } from "zod";
-import { BadException } from "../common/exceptions/domain.exception.js";
+import { BadException, gqlErrors } from "../common/exceptions/domain.exception.js";
 
 type KeyReqType=keyof Request;
 type SchemaType=Partial<Record<KeyReqType,ZodType>>;
@@ -38,4 +38,19 @@ export const validation=(schema:SchemaType)=>{
         }
         next()
     }   
+}
+
+
+
+export const gqlValidation=async<T>(schema:ZodType,args:T):Promise<boolean>=>{
+
+    const validationResult=schema.safeParse(args);
+
+            if(!validationResult.success){
+                const error=validationResult.error as ZodError;
+                throw gqlErrors(new BadException("VALIDATION ERROR",{
+                    issues:error.issues.map(issue=>{return{path:issue.path,message:issue.message}})
+                }))
+            }
+    return true;
 }

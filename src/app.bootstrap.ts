@@ -1,9 +1,9 @@
 import express from "express";
-import { authRouter, postRouter } from "./modules/index.js";
+import { authRouter, postRouter, realTimeGateway } from "./modules/index.js";
 import { globalErrorHandler } from "./middleware/error.middleware.js";
 import { PORT } from "./config/config.js";
 import connectDB from "./DB/connection.db.js";
-import { redisService } from "./common/services/redis.service.js";
+import { RedisService, redisService } from "./common/services/redis.service.js";
 import { userRouter } from "./modules/user/index.js";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
@@ -11,10 +11,32 @@ import { s3Service } from "./common/services/s3.service.js";
 import { successResponse } from "./common/response/success.response.js";
 import cors from "cors";
 import { notificationService } from "./common/services/notification.service.js";
+import { createHandler } from "graphql-http/lib/use/express";
+import { schema } from "./modules/graphql/schema.gql.js";
+import { authentication } from "./middleware/authentication.middleware.js";
+import {Server, Socket} from "socket.io";
+import {Server as HttpServerType} from "node:http";
+import { TokenService } from "./common/services/token.service.js";
+import type { IAuthSocket } from "./common/types/express.types.js";
+//import { GraphQLSchema, GraphQLObjectType, GraphQLString } from "graphql";
 const s3WriteStream=promisify(pipeline);
 const bootStrap=async():Promise<void>=>{
     const app:express.Express=express();
     app.use(cors(),express.json());
+    /* const schema=new GraphQLSchema({
+        query:new GraphQLObjectType({
+            name:"RootQueryType",
+            fields:{
+                sayHi:{
+                    type:GraphQLString,
+                    resolve:()=>{
+                        return "HELLO WORLD"
+                    }
+                }
+            }
+        })
+    }) */
+    app.all("/graphql",authentication(),createHandler({schema:schema,context:(req)=>({user:req.raw.user,decoded:req.raw.decoded})}))
     app.get("/",(req:express.Request,res:express.Response,next:express.NextFunction):express.Response=>{
         return res.status(200).json({message:"LANDING PAGE"});
     });
@@ -66,9 +88,12 @@ const bootStrap=async():Promise<void>=>{
     app.use(globalErrorHandler);
     await connectDB();
     await redisService.connect();
-    app.listen(PORT,()=>{
+    const httpServer:HttpServerType= app.listen(PORT,()=>{
         console.log(`SERVER IS RUNNING ON PORT ${PORT}`);
     })
+
+       realTimeGateway.initializeIo(httpServer);
+    
     console.log("APPLICATION BOOTSTRAPED SUCCESSFULLY");
 }
 export default bootStrap;

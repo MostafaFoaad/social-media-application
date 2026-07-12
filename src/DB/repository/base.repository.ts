@@ -61,7 +61,7 @@ export class DatabaseRepository<TRowDoc>{
 
     }):Promise<any>{
         const doc=this.model.findOne(filter,projection)
-
+        if(options?.populate) doc.populate(options.populate as PopulateOptions[])
         if(options?.lean) doc.lean(options.lean)
             return await doc.exec()
     }
@@ -124,17 +124,19 @@ export class DatabaseRepository<TRowDoc>{
     async findOneAndUpdate({
         filter,
         update,
-        options={new:true}
+        options={new:true},
+        populate=[]
     }:{
         filter:QueryFilter<TRowDoc>,
         update:UpdateQuery<TRowDoc>,
-        options?:QueryOptions<TRowDoc>&ReturnsNewDoc
+        options?:QueryOptions<TRowDoc>&ReturnsNewDoc,
+        populate?:PopulateOptions[]
     }):Promise<HydratedDocument<TRowDoc>|null>{
         if(Array.isArray(update)){
             update.push({$set:{__v:{$add:["$__v",1]}}})
-            return await this.model.findOneAndUpdate(filter,update,{...options,updatePipeline:true})
+            return await this.model.findOneAndUpdate(filter,update,{...options,updatePipeline:true}).populate(populate)
         }
-        return await this.model.findOneAndUpdate(filter,update,{...options,$incr:{__v:1}})
+        return await this.model.findOneAndUpdate(filter,update,{...options,$incr:{__v:1}}).populate(populate)
     }
 
     async deleteOne({

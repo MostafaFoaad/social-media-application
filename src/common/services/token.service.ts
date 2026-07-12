@@ -67,7 +67,7 @@ switch(tokenType){
     }
     return signature;
     }
-    decodeToken=async({token,tokenType=TokenTypeEnum.ACCESS}:{token:string,tokenType:TokenTypeEnum}):Promise<{
+    decodeToken=async({token,tokenType=TokenTypeEnum.ACCESS}:{token:string,tokenType?:TokenTypeEnum}):Promise<{
         user:HydratedDocument<IUser>,
         decoded:JwtPayload
     }>=>{
