@@ -27,4 +27,9 @@ router.patch("/resend-confirm-email",validation(validators.resendConfirmEmail), 
     await authService.resendConfirmEmail(req.body)
     return successResponse({res,data:"Done"})
 });
+
+router.post("/signup/gmail", async (req, res, next) => {
+    const {status,Credentials} = await authService. signupWithGmail(req.body.idToken,`${req.protocol}://${req.host}`)
+    return successResponse({res,status,data:{...Credentials}})
+});
 export default router;

@@ -1,5 +1,5 @@
 import { Types, type HydratedDocument } from "mongoose";
-import type { createPostBodyDto, ReactPostParamsDto, ReactPostQueryDto, UpdatePostBodyDto, UpdatePostParamsDto } from "./post.dto.js";
+import type { createPostBodyDto, ReactionsOnPostParamsDto, ReactionsOnPostQueryDto, ReactPostParamsDto, ReactPostQueryDto, UpdatePostBodyDto, UpdatePostParamsDto } from "./post.dto.js";
 import type { IUser } from "../../common/interfaces/user.interface.js";
 import { redisService, type RedisService } from "../../common/services/redis.service.js";
 import { TokenService } from "../../common/services/token.service.js";
@@ -14,6 +14,8 @@ import { AvailabilityEnum } from "../../common/enums/post.enum.js";
 import { getAvailability } from "../../common/utils/post.js";
 import type { PaginateDto } from "../../common/validation/general.validation.js";
 import type { IPaginate } from "../../common/interfaces/pagination.interface.js";
+import  { realTimeGateway,RealTimeGateway } from "../realtime/realtime.gateway.js";
+import type { IChat } from "../../common/interfaces/chat.interface.js";
 export class PostService{
             private readonly redis:RedisService;
             private readonly tokenService:TokenService
@@ -21,6 +23,7 @@ export class PostService{
             private readonly postRepository:PostRepository
             private readonly notification:NotificationService;
             private readonly s3:S3Service
+            private readonly realTimeGateway:RealTimeGateway
         constructor(){
             this.redis=redisService;
             this.tokenService=new TokenService();
@@ -28,6 +31,7 @@ export class PostService{
             this.postRepository=new PostRepository();
             this.notification= notificationService;
             this.s3=s3Service
+            this.realTimeGateway=realTimeGateway
     
         }
 
@@ -245,8 +249,61 @@ export class PostService{
             if(!post){
                 throw new NotFoundException("THE POST NOT FOUND")
             }
+
+            const owner = (post.createdBy as HydratedDocument<IUser>[])[0]!;
+            const socketIds=await this.redis.getSockets(owner._id);
+             if(socketIds.length && Number(react)||0>0){
+                this.realTimeGateway.getIo().to(socketIds).emit("likePost",{postId,userId:user._id,react})
+            } 
             return post.toJSON();
         }
+
+        async reactionsOnPost({postId}:ReactionsOnPostParamsDto,{react}:ReactionsOnPostQueryDto,user:HydratedDocument<IUser>):Promise<IPost>{
+            const post=await this.postRepository.findOne({
+                filter:{
+                    _id:postId,
+                    $or:getAvailability(user)
+                },
+        })
+
+        if(!post){
+                throw new NotFoundException("THE POST NOT FOUND")
+            }
+
+            const existingReactions=post.reactions.find(
+                (react)=>react.userId.toString()==user._id.toString()
+            )
+
+            const reactionsRemoving=existingReactions?.react===react
+
+
+            if(reactionsRemoving){
+             post.reactions=post.reactions.filter(
+                (react)=>react.userId.toString()!==user._id.toString()
+            )   
+            }
+
+            else if(existingReactions){
+                existingReactions.react=react
+            }
+
+            else{
+                post.reactions.push({userId:user._id,react})
+            }
+
+            await post.save();
+
+            const owner = (post.createdBy as HydratedDocument<IUser>[])[0]!;
+            const socketIds=await this.redis.getSockets(owner._id);
+             if(socketIds.length && !reactionsRemoving){
+                this.realTimeGateway.getIo().to(socketIds).emit("likePost",{postId,userId:user._id,react})
+            }
+
+            return post.toJSON();
+
+        
+}
+
 }
 
 export const postService= new PostService()

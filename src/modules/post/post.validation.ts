@@ -2,6 +2,7 @@ import {z} from "zod";
 import { AvailabilityEnum } from "../../common/enums/post.enum.js";
 import { Types } from "mongoose";
 import { generalValidationFields } from "../../common/validation/general.validation.js";
+import { ReactTypeEnum } from "../../common/enums/react.enum.js";
 export const createPost={
     body:z.strictObject({
         content:z.string().optional(),
@@ -81,6 +82,22 @@ export const reactPost={
         react:z.coerce.number()
     })
 }
+
+export const reactionsOnPost={
+    params:z.strictObject({
+        postId:generalValidationFields.id
+    }),
+
+    query:z.strictObject({
+        react:z.enum(ReactTypeEnum)
+    })
+}
+
+export const reactionsOnPostGQL=z.strictObject({
+        postId:generalValidationFields.id,
+        react:z.enum(ReactTypeEnum)
+    })
+
 
 
 export const reactPostGQL=z.strictObject({

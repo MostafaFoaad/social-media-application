@@ -14,6 +14,8 @@ import { ProviderEnum } from "../../common/enums/user.enum.js";
 import { TokenService } from "../../common/services/token.service.js";
 import type { ILoginResponse } from "./auth.entity.js";
 import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
+import { OAuth2Client, type TokenPayload } from "google-auth-library";
+import { AUDIENCE } from "../../config/config.js";
 
 
 class AuthenticationService{
@@ -157,6 +159,57 @@ class AuthenticationService{
         return user.toJSON();
     } 
 
+     private async verifyGoogleAccount(idToken:string):Promise<TokenPayload>{
+        const client = new OAuth2Client();
+        const ticket = await client.verifyIdToken({
+            idToken,
+            audience: AUDIENCE,  
+                });
+        const payload = ticket.getPayload();
+        if(!payload?.email_verified){
+            throw new BadException('Fail to verify by google');
+                }
+        return payload;
+    }
+
+     async loginWithGmail(idToken:string,issuer:string){
+        const payLoad= await this.verifyGoogleAccount(idToken);
+        console.log(payLoad);
+        const user=await this.userRepository. findOne({
+            filter:{email:payLoad.email as string , provider:ProviderEnum.GOOGLE}
+     })
+     if(!user){
+        throw new NotFoundException('NOT REGISTERED ACCOUNT');
+        
+     }
+     return await this.tokenService.createLoginCredentials(user,issuer);
+    }
+
+     async signupWithGmail(idToken:string,issuer:string){
+        const payLoad= await this.verifyGoogleAccount(idToken);
+        console.log(payLoad);
+        const checkExist=await this.userRepository.findOne({
+            filter:{email:payLoad.email as string}
+        })
+     if(checkExist){
+        if(checkExist.provider!==ProviderEnum.GOOGLE){
+            throw new ConflictException('Invalid login provider');
+        }
+        return {status:200,Credentials:await this.loginWithGmail(idToken,issuer)};;
+     }
+
+        const user=await this.userRepository.createOne({
+        data:{
+            firstName:payLoad.given_name as string,
+            lastName:payLoad.family_name as string,
+            email:payLoad.email as string,
+            profilePicture:payLoad.picture as string,
+            confirmEmail:new Date(),
+            provider:ProviderEnum.GOOGLE
+        }
+     })
+    return {status:201,Credentials:await this.tokenService.createLoginCredentials(user,issuer)};
+    } 
 
     
 }

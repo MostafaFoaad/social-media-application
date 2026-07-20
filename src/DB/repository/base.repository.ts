@@ -1,4 +1,4 @@
-import type { AnyKeys, CreateOptions, DeleteResult, FlattenMaps, HydratedDocument, Model, ProjectionType, QueryFilter, QueryOptions, ReturnsNewDoc, UpdateQuery } from "mongoose";
+import type { AnyKeys, CreateOptions, DeleteResult, FlattenMaps, HydratedDocument, Model, PipelineStage, ProjectionType, QueryFilter, QueryOptions, ReturnsNewDoc, UpdateQuery } from "mongoose";
 //import type { IUser } from "../../common/interfaces/user.interface.js";
 import type { IPaginate } from "../../common/interfaces/pagination.interface.js";
 import type { PopulateOptions } from "mongoose";
@@ -137,6 +137,22 @@ export class DatabaseRepository<TRowDoc>{
             return await this.model.findOneAndUpdate(filter,update,{...options,updatePipeline:true}).populate(populate)
         }
         return await this.model.findOneAndUpdate(filter,update,{...options,$incr:{__v:1}}).populate(populate)
+    }
+
+
+    async countDocuments({
+        filter
+    }:
+    {
+        filter?:QueryFilter<TRowDoc>
+    }):Promise<number>{
+        return await this.model.countDocuments(filter)
+    }
+
+    async aggregate<T>(
+        Pipeline:PipelineStage[]
+    ):Promise<T[]>{
+        return await this.model.aggregate(Pipeline)
     }
 
     async deleteOne({

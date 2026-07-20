@@ -2,6 +2,7 @@ import { model, Types} from "mongoose";
 import { Schema } from "mongoose";
 import type { IPost} from "../../common/interfaces/index.js";
 import { AvailabilityEnum} from "../../common/enums/index.js";
+import { ReactTypeEnum } from "../../common/enums/react.enum.js";
 
 
 const postSchema=new Schema<IPost>({
@@ -15,6 +16,11 @@ const postSchema=new Schema<IPost>({
     availability:{type:Number,enum:AvailabilityEnum,default:AvailabilityEnum.PUBLIC},
 
     likes:[{type:Types.ObjectId,ref:"User"}],
+
+    reactions:[{
+        userId:{type:Types.ObjectId, ref:"User", required:true},
+        react:{type:String, enum:Object.values(ReactTypeEnum), required:true},
+    }],
 
     tags:[{type:Types.ObjectId,ref:"User"}],
 
@@ -39,7 +45,7 @@ postSchema.virtual("comments",{
     localField:"_id",
     foreignField:"postId",
     ref:"Comment",
-    justOne:true,
+    //justOne:true,
 })
 
 

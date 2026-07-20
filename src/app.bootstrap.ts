@@ -18,6 +18,9 @@ import {Server, Socket} from "socket.io";
 import {Server as HttpServerType} from "node:http";
 import { TokenService } from "./common/services/token.service.js";
 import type { IAuthSocket } from "./common/types/express.types.js";
+import { chatRouter } from "./modules/chat/index.js";
+import { UserRepository } from "./DB/repository/user.repository.js";
+import { Types } from "mongoose";
 //import { GraphQLSchema, GraphQLObjectType, GraphQLString } from "graphql";
 const s3WriteStream=promisify(pipeline);
 const bootStrap=async():Promise<void>=>{
@@ -55,6 +58,7 @@ const bootStrap=async():Promise<void>=>{
     app.use("/auth",authRouter);
     app.use("/user",userRouter);
     app.use("/post",postRouter);
+    app.use("/chat",chatRouter);
     app.get("/uploads/*path",async(req:express.Request,res:express.Response,next:express.NextFunction)=>{
         const {download,fileName}=req.query as {download:string,fileName:string};
         const {path}=req.params as{path:string[]};
@@ -88,6 +92,20 @@ const bootStrap=async():Promise<void>=>{
     app.use(globalErrorHandler);
     await connectDB();
     await redisService.connect();
+
+     /* try{
+        const userRepository=new UserRepository();
+        const user=await userRepository.deleteOne({
+            filter:{
+                _id:Types.ObjectId.createFromHexString("69ecc66bd592863e1287808c"),
+            },
+
+            
+        })
+    }
+    catch(error){
+        console.log(error)
+    } */ 
     const httpServer:HttpServerType= app.listen(PORT,()=>{
         console.log(`SERVER IS RUNNING ON PORT ${PORT}`);
     })

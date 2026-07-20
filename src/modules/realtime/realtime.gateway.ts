@@ -18,7 +18,7 @@ export class RealTimeGateway{
 
     authentication= async(socket:IAuthSocket,next:any)=>{
         try{
-            const {user,decoded}= await this.tokenService.decodeToken({token:socket.handshake.headers.authorization as string  })
+            const {user,decoded}= await this.tokenService.decodeToken({token:socket.handshake.headers.authorization || socket.handshake.auth.authorization  })
 
             socket.data={user,decoded}
             await this.redisService.addSocket(user._id, socket.id)
@@ -31,7 +31,9 @@ export class RealTimeGateway{
 
 
     initializeIo=(httpServer:HttpServerType)=>{
-            this.io=new Server(httpServer)
+            this.io=new Server(httpServer,{
+                cors:{origin:"*"}
+            })
         
             this.io.use(this.authentication)
         
@@ -52,6 +54,10 @@ export class RealTimeGateway{
                     }
                 })
             })
+    }
+
+    getIo(){
+        return this.io
     }
 }
 

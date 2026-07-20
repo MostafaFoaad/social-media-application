@@ -7,7 +7,7 @@ import * as validators from "./post.validation.js";
 import { validation } from "../../middleware/validation.middleware.js";
 import { postService } from "./post.service.js";
 import { paginationValidationSchema, type PaginateDto } from "../../common/validation/general.validation.js";
-import type { ReactPostParamsDto, ReactPostQueryDto, UpdatePostBodyDto, UpdatePostParamsDto } from "./post.dto.js";
+import type { ReactionsOnPostParamsDto, ReactionsOnPostQueryDto, ReactPostParamsDto, ReactPostQueryDto, UpdatePostBodyDto, UpdatePostParamsDto } from "./post.dto.js";
 import { commentRouter } from "../comment/index.js";
 const router=Router();
 
@@ -51,6 +51,16 @@ router.patch("/:postId/react",
     validation(validators.reactPost),
     async(req:Request,res:Response,next:NextFunction):Promise<Response>=>{
         const data=await postService.reactPost(req.params as ReactPostParamsDto,req.query as unknown as ReactPostQueryDto,req.user);
+    return successResponse({res,status:200,data})
+
+})
+
+
+router.patch("/:postId/reactions",
+    authentication(),
+    validation(validators.reactionsOnPost),
+    async(req:Request,res:Response,next:NextFunction):Promise<Response>=>{
+        const data=await postService.reactionsOnPost(req.params as ReactionsOnPostParamsDto,req.query as unknown as ReactionsOnPostQueryDto,req.user);
     return successResponse({res,status:200,data})
 
 })

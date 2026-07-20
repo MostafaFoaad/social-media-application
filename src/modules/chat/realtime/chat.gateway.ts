@@ -10,6 +10,9 @@ export class ChatGateWay{
 
     registerEvents=(socket:IAuthSocket,io:Server)=>{
         this.chatEvent.sayHi(socket)
+        this.chatEvent.sendMessage(socket,io)
+        this.chatEvent.sendGroupMessage(socket,io)
+        this.chatEvent.join_room(socket,io)
     }
 }
 

@@ -21,9 +21,9 @@ export class PostGQLSchema{
             return{
                 reactPost:{
                     type:PostListTypes.reactOnPost,
-                    args:PostListArgs.reactOnPost,
+                    args:PostListArgs.reactionsOnPost,
                     describtion:"REACT TEXT",
-                    resolve:this.postListResolver.reactOnPost
+                    resolve:this.postListResolver.reactionsOnPost
                 }
             }
         }
