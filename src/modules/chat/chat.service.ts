@@ -7,6 +7,7 @@ import { ChatEnum } from "../../common/enums/chat.enum.js";
 import  { UserRepository } from "../../DB/repository/user.repository.js";
 import  { s3Service,S3Service } from "../../common/services/s3.service.js";
 import { randomUUID } from "node:crypto";
+import type { LikeMessageParamsDto } from "./chat.dto.js";
 
 export class ChatService{
     private chatRepository:ChatRepository
@@ -153,6 +154,49 @@ async createGroup({participantsIds=[],group}:{participantsIds:string[]|Types.Obj
     return chattingGroup.toJSON();
 
 }
+
+     async likeMessage({chatId,messageId}:LikeMessageParamsDto,user:HydratedDocument<IUser>):Promise<IChat>{
+        const chat=await this.chatRepository.findOneChat({
+            filter:{
+                _id:chatId,
+                participants:{$in:[user._id]}
+            }
+        })
+
+        if(!chat){
+            throw new NotFoundException("Fail To Find The Chat")
+        }
+
+        const message=chat.message.find(
+            message=>message._id.toString()===messageId.toString()
+        )
+        
+
+        if(!message){
+            throw new NotFoundException("Fail To Find The Message")
+        }
+
+        const isLiked=message.likes.find(
+            like=>like.toString()===user._id.toString()
+        )
+
+        if(isLiked){
+            message.likes=message.likes.filter(
+                like=>like.toString()!==user._id.toString()
+            )
+        }
+
+        else{
+            message.likes.push(user._id)
+        }
+
+        await chat.save()
+        //console.log("saved")
+
+        
+        return chat.toJSON();
+
+    } 
 
 }
 

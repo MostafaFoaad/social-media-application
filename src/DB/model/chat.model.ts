@@ -13,7 +13,7 @@ const messageSchema=new Schema<IMessage>({
     },
     attachments:{type:[String]},
 
-    likes:[{type:Types.ObjectId,ref:"User"}],
+    likes:{type:[{type:Types.ObjectId,ref:"User"}],default:[]},
 
     tags:[{type:Types.ObjectId,ref:"User"}],
 

@@ -3,9 +3,10 @@ import type { IUser } from "./user.interface.js"
 import type { ChatEnum } from "../enums/chat.enum.js"
 
 export interface IMessage{
+    _id:Types.ObjectId,
     content?:string,
     attachments?:string[],
-    likes?:Types.ObjectId[]|IUser[],
+    likes:Types.ObjectId[],
     tags?:Types.ObjectId[]|IUser[],
     createdBy:Types.ObjectId|IUser,
     createdAt:Date,

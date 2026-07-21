@@ -3,6 +3,9 @@ import { authentication } from "../../middleware/authentication.middleware.js";
 import { chatService } from "./chat.service.js";
 import { successResponse } from "../../common/response/success.response.js";
 import { cloudFileUpload, fileFieldValidation } from "../../common/utils/multer/index.js";
+import { validation } from "../../middleware/validation.middleware.js";
+import * as validators from "./chat.validation.js";
+import type { LikeMessageParamsDto } from "./chat.dto.js";
 const router=Router({mergeParams:true})
 router.get(
     "/",
@@ -33,4 +36,13 @@ router.get(
     }
 
     )
+
+    router.patch("/:chatId/messages/:messageId/like",
+        authentication(),
+        validation(validators.likeMessage),
+        async(req:Request,res:Response,next:NextFunction):Promise<Response>=>{
+            const data=await chatService.likeMessage(req.params as LikeMessageParamsDto,req.user);
+        return successResponse({res,status:200,data})
+    
+    })
 export default router;

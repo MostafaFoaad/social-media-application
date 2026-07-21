@@ -54,9 +54,9 @@ export class ChatRepository extends DatabaseRepository<IChat>{
         }):Promise<any>{
             page=parseInt(page as string);
             size=parseInt(size as string);
-            const doc=this.model.findOne(filter,{
+            const doc=this.model.findOne(filter /* ,{
                 message:{$slice:[-(page*size),size]}
-            })
+            } */)
             if(options?.populate) doc.populate(options.populate as PopulateOptions[])
             if(options?.lean) doc.lean(options.lean)
                 return await doc.exec()
