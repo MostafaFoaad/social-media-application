@@ -8,7 +8,24 @@ export const generalValidationFields={
         otp:z.string({error:"OTP IS REQUIRED"}).regex(/^\d{6}$/),
         password:z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,16}$/,{error:"weak password"}),
         username:z.string({error:"username is mandatory"}).min(2,{error:"min is 2 char"}).max(25,{error:"max is 25"}),
-        confirmPassword:z.string()
+        confirmPassword:z.string(),
+        file:function(mimetype:string[]){
+                return z.strictObject({
+                        fieldname:z.string(),
+                        originalname:z.string(),
+                        encoding:z.string(),
+                        mimetype:z.enum(mimetype),
+                        buffer:z.any().optional(),
+                        path:z.string().optional(),
+                        size:z.number(),
+                        destination:z.string().optional(),
+                        filename:z.string().optional()
+                }).superRefine((args,ctx)=>{
+                        if(!args.path&&!args.buffer){
+                                ctx.addIssue({code:"custom",message:"buffer is required",path:['buffer']})
+                        }
+                })
+        }
 }
 
 export const paginationValidationSchema={

@@ -21,6 +21,7 @@ import type { IAuthSocket } from "./common/types/express.types.js";
 import { chatRouter } from "./modules/chat/index.js";
 import { UserRepository } from "./DB/repository/user.repository.js";
 import { Types } from "mongoose";
+import { storyRouter } from "./modules/story/index.js";
 //import { GraphQLSchema, GraphQLObjectType, GraphQLString } from "graphql";
 const s3WriteStream=promisify(pipeline);
 const bootStrap=async():Promise<void>=>{
@@ -59,6 +60,7 @@ const bootStrap=async():Promise<void>=>{
     app.use("/user",userRouter);
     app.use("/post",postRouter);
     app.use("/chat",chatRouter);
+    app.use("/story",storyRouter);
     app.get("/uploads/*path",async(req:express.Request,res:express.Response,next:express.NextFunction)=>{
         const {download,fileName}=req.query as {download:string,fileName:string};
         const {path}=req.params as{path:string[]};
