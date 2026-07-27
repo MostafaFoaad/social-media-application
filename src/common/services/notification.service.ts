@@ -1,4 +1,4 @@
-import admin from "firebase-admin";
+/* import admin from "firebase-admin";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -49,3 +49,4 @@ async sendNotifications ({
 }
 
 export const notificationService=new NotificationService();
+ */

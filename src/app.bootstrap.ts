@@ -10,7 +10,7 @@ import { promisify } from "node:util";
 import { s3Service } from "./common/services/s3.service.js";
 import { successResponse } from "./common/response/success.response.js";
 import cors from "cors";
-import { notificationService } from "./common/services/notification.service.js";
+//import { notificationService } from "./common/services/notification.service.js";
 import { createHandler } from "graphql-http/lib/use/express";
 import { schema } from "./modules/graphql/schema.gql.js";
 import { authentication } from "./middleware/authentication.middleware.js";
@@ -45,7 +45,7 @@ const bootStrap=async():Promise<void>=>{
         return res.status(200).json({message:"LANDING PAGE"});
     });
 
-    app.post("/send-notification",async(req:express.Request,res:express.Response,next:express.NextFunction):Promise<express.Response>=>{
+    /* app.post("/send-notification",async(req:express.Request,res:express.Response,next:express.NextFunction):Promise<express.Response>=>{
         console.log({token:req.body.token})
         await notificationService.sendNotification({
             token:req.body.token,
@@ -55,7 +55,7 @@ const bootStrap=async():Promise<void>=>{
             }
         })
         return res.status(200).json({message:"LANDING PAGE"});
-    });
+    }); */
     app.use("/auth",authRouter);
     app.use("/user",userRouter);
     app.use("/post",postRouter);
