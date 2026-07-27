@@ -52,9 +52,9 @@ export class RedisService{
         ttl?:number|undefined
       }):Promise<string|null> => {
         try {
-         /*    if (!this.client.isOpen) {
+             if (!this.client.isOpen) {
             await this.client.connect();
-        } */
+        } 
             const data =
                 typeof value === "string" ? value : JSON.stringify(value);
 
@@ -84,9 +84,9 @@ export class RedisService{
 
         get = async (key: string): Promise<any> => {
     try {
-        /* if (!this.client.isOpen) {
+         if (!this.client.isOpen) {
             await this.client.connect();
-        } */
+        } 
         const data = await this.client.get(key);
         if (!data) return null;
         try {
