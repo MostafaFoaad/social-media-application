@@ -1,7 +1,7 @@
 import { GraphQLEnumType, GraphQLID, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { OneUserType } from "../../user/gql/user.types.gql.js";
 import { AvailabilityEnum } from "../../../common/enums/post.enum.js";
-import { ReactTypeEnum } from "../../../common/enums/react.enum.js";
+//import { ReactTypeEnum } from "../../../common/enums/react.enum.js";
 import { ReactionsOnPostGQLEnumType } from "./post.args.gql.js";
 
 export const AvailabilityEnumGQLType=new GraphQLEnumType({

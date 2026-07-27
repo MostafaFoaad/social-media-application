@@ -1,4 +1,4 @@
-import { error } from "node:console";
+//import { error } from "node:console";
 import { ApplicationException } from "./application.exception.js";
 import { GraphQLError } from "graphql";
 

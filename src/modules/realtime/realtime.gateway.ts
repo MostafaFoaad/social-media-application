@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import { TokenService } from "../../common/services/token.service.js";
 import  { redisService,RedisService } from "../../common/services/redis.service.js";
-import type { IAuthSocket, IAuthUser } from "../../common/types/express.types.js";
+import type { IAuthSocket/* , IAuthUser */ } from "../../common/types/express.types.js";
 import {Server as HttpServerType} from "node:http";
 import { chatGateWay } from "../chat/index.js";
 

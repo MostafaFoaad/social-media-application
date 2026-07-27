@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema } from "graphql";
 import { userGQLSchema } from "../user/index.js";
-import { PostGQLSchema, postGQLSchema } from "../post/index.js";
+import { /* PostGQLSchema, */ postGQLSchema } from "../post/index.js";
 
 const query=new GraphQLObjectType({
     name:"RootSchemaQuery",

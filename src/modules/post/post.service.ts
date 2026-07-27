@@ -2,7 +2,7 @@ import { Types, type HydratedDocument } from "mongoose";
 import type { createPostBodyDto, ReactionsOnPostParamsDto, ReactionsOnPostQueryDto, ReactPostParamsDto, ReactPostQueryDto, UpdatePostBodyDto, UpdatePostParamsDto } from "./post.dto.js";
 import type { IUser } from "../../common/interfaces/user.interface.js";
 import { redisService, type RedisService } from "../../common/services/redis.service.js";
-import { TokenService } from "../../common/services/token.service.js";
+//import { TokenService } from "../../common/services/token.service.js";
 import { UserRepository } from "../../DB/repository/user.repository.js";
 import { s3Service, type S3Service } from "../../common/services/s3.service.js";
 import { BadException, NotFoundException } from "../../common/exceptions/domain.exception.js";
@@ -10,15 +10,15 @@ import { randomUUID } from "node:crypto";
 import { PostRepository } from "../../DB/repository/post.repository.js";
 //import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
 import type { IPost } from "../../common/interfaces/post.interface.js";
-import { AvailabilityEnum } from "../../common/enums/post.enum.js";
+//import { AvailabilityEnum } from "../../common/enums/post.enum.js";
 import { getAvailability } from "../../common/utils/post.js";
 import type { PaginateDto } from "../../common/validation/general.validation.js";
 import type { IPaginate } from "../../common/interfaces/pagination.interface.js";
 import  { realTimeGateway,RealTimeGateway } from "../realtime/realtime.gateway.js";
-import type { IChat } from "../../common/interfaces/chat.interface.js";
+//import type { IChat } from "../../common/interfaces/chat.interface.js";
 export class PostService{
             private readonly redis:RedisService;
-            private readonly tokenService:TokenService
+            //private readonly tokenService:TokenService
             private readonly userRepository:UserRepository
             private readonly postRepository:PostRepository
            // private readonly notification:NotificationService;
@@ -26,7 +26,7 @@ export class PostService{
             private readonly realTimeGateway:RealTimeGateway
         constructor(){
             this.redis=redisService;
-            this.tokenService=new TokenService();
+            //this.tokenService=new TokenService();
             this.userRepository=new UserRepository();
             this.postRepository=new PostRepository();
             //this.notification= notificationService;

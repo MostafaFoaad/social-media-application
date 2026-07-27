@@ -132,7 +132,7 @@ export class UserService{
 
 
     async dashboard(user:HydratedDocument<IUser>){
-        const [allPosts,allComments,posts]=await Promise.all([
+        const [allPosts,allComments/* ,posts */]=await Promise.all([
             this.postRepository.countDocuments({filter:{createdBy:user._id}}),
             this.commentRepository.countDocuments({filter:{createdBy:user._id}}),
             this.postRepository.find({filter:{createdBy:user._id}}),

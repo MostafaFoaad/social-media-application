@@ -1,4 +1,4 @@
-import { DeleteObjectCommand, DeleteObjectsCommand, GetObjectCommand, ListObjectsV2Command, ObjectCannedACL, PutObjectCommand, S3Client, type CompleteMultipartUploadCommandOutput, type DeleteObjectCommandInput, type DeleteObjectCommandOutput, type DeleteObjectsCommandOutput, type GetObjectCommandOutput, type ListObjectsV2CommandOutput } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, DeleteObjectsCommand, GetObjectCommand, ListObjectsV2Command, ObjectCannedACL, PutObjectCommand, S3Client, type CompleteMultipartUploadCommandOutput/* , type DeleteObjectCommandInput */, type DeleteObjectCommandOutput, type DeleteObjectsCommandOutput, type GetObjectCommandOutput, type ListObjectsV2CommandOutput } from "@aws-sdk/client-s3";
 import { APPLICATION_NAME, AWS_ACCESS_KEY_ID, AWS_BUCKET_NAME, AWS_EXPIRES_IN, AWS_REGION, AWS_SECRET_ACCESS_KEY } from "../../config/config.js";
 import { randomUUID } from "node:crypto";
 import { BadException } from "../exceptions/domain.exception.js";

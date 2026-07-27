@@ -1,5 +1,5 @@
 import type { FlattenMaps, HydratedDocument, PopulateOptions, ProjectionType, QueryFilter, QueryOptions } from "mongoose";
-import type { IChat, IComment } from "../../common/interfaces/index.js";
+import type { IChat/* , IComment  */} from "../../common/interfaces/index.js";
 import { ChatModel } from "../model/chat.model.js";
 import { DatabaseRepository } from "./base.repository.js";
 

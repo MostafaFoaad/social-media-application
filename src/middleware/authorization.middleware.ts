@@ -3,7 +3,7 @@ import {type Request,type Response, type NextFunction } from "express";
 import { ForbiddenException, gqlErrors } from "../common/exceptions/domain.exception.js";
 import type { HydratedDocument } from "mongoose";
 import type { IUser } from "../common/interfaces/user.interface.js";
-import { GraphQLError } from "graphql";
+//import { GraphQLError } from "graphql";
 
 export const authorization=(accessRoles:RoleEnum[])=>{
     return async (req:Request,res:Response,next:NextFunction)=>{
