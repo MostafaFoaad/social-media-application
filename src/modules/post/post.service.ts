@@ -8,7 +8,7 @@ import { s3Service, type S3Service } from "../../common/services/s3.service.js";
 import { BadException, NotFoundException } from "../../common/exceptions/domain.exception.js";
 import { randomUUID } from "node:crypto";
 import { PostRepository } from "../../DB/repository/post.repository.js";
-import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
+//import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
 import type { IPost } from "../../common/interfaces/post.interface.js";
 import { AvailabilityEnum } from "../../common/enums/post.enum.js";
 import { getAvailability } from "../../common/utils/post.js";
@@ -21,7 +21,7 @@ export class PostService{
             private readonly tokenService:TokenService
             private readonly userRepository:UserRepository
             private readonly postRepository:PostRepository
-            private readonly notification:NotificationService;
+           // private readonly notification:NotificationService;
             private readonly s3:S3Service
             private readonly realTimeGateway:RealTimeGateway
         constructor(){
@@ -29,7 +29,7 @@ export class PostService{
             this.tokenService=new TokenService();
             this.userRepository=new UserRepository();
             this.postRepository=new PostRepository();
-            this.notification= notificationService;
+            //this.notification= notificationService;
             this.s3=s3Service
             this.realTimeGateway=realTimeGateway
     
@@ -101,7 +101,7 @@ export class PostService{
             throw new BadException("FAIL")
         }
 
-        if(FCM_Tokens.length){
+        /* if(FCM_Tokens.length){
             await this.notification.sendNotifications({
                 tokens:FCM_Tokens,
                 data:{
@@ -112,7 +112,7 @@ export class PostService{
                     })
                 }
             })
-        }
+        } */
 
         return post.toJSON()
         }
@@ -216,7 +216,7 @@ export class PostService{
             })
         }
 
-        if(FCM_Tokens.length){
+        /* if(FCM_Tokens.length){
             await this.notification.sendNotifications({
                 tokens:FCM_Tokens,
                 data:{
@@ -227,7 +227,7 @@ export class PostService{
                     })
                 }
             })
-        }
+        } */
 
         return updatePost.toJSON()
         }

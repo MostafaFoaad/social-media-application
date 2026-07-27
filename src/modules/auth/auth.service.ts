@@ -13,7 +13,7 @@ import { createNumberOtp } from "../../common/utils/otp.js";
 import { ProviderEnum } from "../../common/enums/user.enum.js";
 import { TokenService } from "../../common/services/token.service.js";
 import type { ILoginResponse } from "./auth.entity.js";
-import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
+//import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
 import { OAuth2Client, type TokenPayload } from "google-auth-library";
 import { AUDIENCE } from "../../config/config.js";
 
@@ -22,16 +22,16 @@ class AuthenticationService{
     private userRepository:UserRepository;
     private readonly redis:RedisService;
     private readonly tokenService:TokenService;
-    private readonly notification:NotificationService;
+    //private readonly notification:NotificationService;
     constructor(){
         this.userRepository=new UserRepository();
         this.redis=redisService;
         this.tokenService=new TokenService();
-        this.notification= notificationService
+        //this.notification= notificationService
     }
 
     public async login(inputs:LoginDto,issuer:string):Promise<ILoginResponse>{
-    const { email, password, FCM } = inputs;
+    const { email, password/* , FCM  */} = inputs;
     const user = await this.userRepository.findOne({
         filter: { email,provider:ProviderEnum.SYSTEM ,confirmEmail:{$exists:true} },
     });
@@ -44,13 +44,13 @@ class AuthenticationService{
         throw new NotFoundException('INVALID LOGIN DATA');
     }
 
-    if(FCM){
+    /* if(FCM){
         await this.redis.addFCM(user._id,FCM);
         const tokens=await this.redis.getFCMs(user._id);
         if(tokens?.length){
             await this.notification.sendNotifications({tokens,data:{title:"login",body:"SUCCESSFULL LOGIN"}})
         }
-    }
+    } */
 
 
     return await this.tokenService.createLoginCredentials(user,issuer);

@@ -7,7 +7,7 @@ import { s3Service, type S3Service } from "../../common/services/s3.service.js";
 import { BadException, NotFoundException } from "../../common/exceptions/domain.exception.js";
 import { randomUUID } from "node:crypto";
 import { PostRepository } from "../../DB/repository/post.repository.js";
-import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
+//import { notificationService, type NotificationService } from "../../common/services/notification.service.js";
 import  { CommentRepository } from "../../DB/repository/comment.repository.js";
 import type { IComment } from "../../common/interfaces/comment.interface.js";
 import { getAvailability } from "../../common/utils/post.js";
@@ -17,14 +17,14 @@ export class CommentService{
             private readonly commentRepository:CommentRepository;
             private readonly userRepository:UserRepository
             private readonly postRepository:PostRepository
-            private readonly notification:NotificationService;
+            //private readonly notification:NotificationService;
             private readonly s3:S3Service
         constructor(){
             this.redis=redisService;
             this.userRepository=new UserRepository();
             this.postRepository=new PostRepository();
             this.commentRepository=new CommentRepository();
-            this.notification= notificationService;
+            //this.notification= notificationService;
             this.s3=s3Service
     
         }
@@ -91,7 +91,7 @@ export class CommentService{
             throw new BadException("FAIL")
         }
 
-        if(FCM_Tokens.length){
+        /* if(FCM_Tokens.length){
             await this.notification.sendNotifications({
                 tokens:FCM_Tokens,
                 data:{
@@ -103,7 +103,7 @@ export class CommentService{
                     })
                 }
             })
-        }
+        } */
 
         return comment.toJSON()
         }
@@ -172,7 +172,7 @@ export class CommentService{
             throw new BadException("FAIL")
         }
 
-        if(FCM_Tokens.length){
+        /* if(FCM_Tokens.length){
             await this.notification.sendNotifications({
                 tokens:FCM_Tokens,
                 data:{
@@ -185,7 +185,7 @@ export class CommentService{
                     })
                 }
             })
-        }
+        } */
 
         return reply.toJSON(); 
         }
