@@ -108,6 +108,7 @@ userSchema.pre("save",async function(this:HydratedDocument<IUser>&{wasNew:boolea
 
 userSchema.post("save",async function(){
     const that=this as HydratedDocument<IUser>&{wasNew:boolean};
+    console.log({post:that.wasNew})
 })
 
 
