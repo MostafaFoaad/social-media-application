@@ -10,7 +10,6 @@ export const authentication=(tokenType:TokenTypeEnum=TokenTypeEnum.ACCESS)=>{
         if(!schema||!credentials){
             throw new UnauthorizedException('INVALID APPROACH');
         }
-        console.log({schema,credentials})
         switch(schema){
             case 'Bearer':
                const{decoded,user}= await tokenService.decodeToken({token:credentials,tokenType});

@@ -24,6 +24,4 @@ export const sendEmail=async({
         attachments,
         from:`"${APPLICATION_NAME}" <${EMAIL_APP}>`
     });
-
-    console.log("message sent:",info.messageId)
 }

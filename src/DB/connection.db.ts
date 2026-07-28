@@ -4,7 +4,7 @@ import { DB_URI } from "../config/config.js"
 const connectDB=async()=>{
     try{
         await connect(DB_URI,{serverSelectionTimeoutMS:30000});
-        console.log(`DB CONNECTED SUCCESSFULLY`)
+        console.log(`THE DB CONNECTED SUCCESSFULLY`)
     }
     catch(error){
         console.log(`FAIL TO CONNECT TO DB`)

@@ -14,7 +14,6 @@ export class ChatEvent{
     sayHi=(socket:IAuthSocket)=>{
         return socket.on("sayHi",(data)=>{
             try{
-                console.log({data})
                 socket.emit("sayHi","lol")
             }
 
@@ -29,7 +28,6 @@ export class ChatEvent{
     sendMessage=(socket:IAuthSocket,io:Server)=>{
         return socket.on("sendMessage",async({content,sendTo}:{content:string,sendTo:string})=>{
             try{ 
-            console.log({content,sendTo});
             await this.chatService.sendMessage({content,sendTo},socket.data.user)
             io.to(await this.redisService.getSockets(socket.data.user._id)).emit("successMessage",{content,sendTo})
             const recievedSocketsIds=await this.redisService.getSockets(sendTo)
@@ -48,7 +46,6 @@ export class ChatEvent{
     sendGroupMessage=(socket:IAuthSocket,io:Server)=>{
         return socket.on("sendGroupMessage",async({content,groupId}:{content:string,groupId:string})=>{
             try{ 
-            console.log({content,groupId});
             const roomId=await this.chatService.sendGroupMessage({content,groupId},socket.data.user)
             io.to(await this.redisService.getSockets(socket.data.user._id)).emit("successMessage",{content,sendTo:groupId})
             
@@ -68,7 +65,6 @@ export class ChatEvent{
     join_room=(socket:IAuthSocket,io:Server)=>{
         return socket.on("join_room",async({roomId}:{roomId:string})=>{
             try{
-                console.log("{roomId,socket:socket.data.user._id}")
                 socket.join(roomId)
             }
             catch(error){

@@ -39,9 +39,7 @@ export class RealTimeGateway{
         
             this.io.on("connection",async(socket:IAuthSocket)=>{
                 
-                console.log(socket.id)
-                console.log(socket.data.user)
-                console.log({connections:await this.redisService.getSockets(socket.data.user._id)})
+               
                 chatGateWay.registerEvents(socket,this.io)
         
                 socket.on("disconnect",async()=>{

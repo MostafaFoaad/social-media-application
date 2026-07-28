@@ -109,11 +109,11 @@ const bootStrap=async():Promise<void>=>{
         console.log(error)
     } */ 
     const httpServer:HttpServerType= app.listen(PORT,()=>{
-        console.log(`SERVER IS RUNNING ON PORT ${PORT}`);
+        console.log(`THE SERVER IS RUNNING ON PORT ${PORT}`);
     })
 
        realTimeGateway.initializeIo(httpServer);
     
-    console.log("APPLICATION BOOTSTRAPED SUCCESSFULLY");
+    console.log("THE APPLICATION BOOTSTRAPED SUCCESSFULLY");
 }
 export default bootStrap;

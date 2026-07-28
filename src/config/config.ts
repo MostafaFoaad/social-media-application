@@ -50,4 +50,3 @@ export const AWS_SECRET_ACCESS_KEY=process.env.AWS_SECRET_ACCESS_KEY as string;
 export const AWS_EXPIRES_IN=parseInt(process.env.AWS_EXPIRES_IN as string || "120")
 
 export const SALT_ROUND = parseInt(process.env.SALT_ROUND ?? '10')
-console.log({SALT_ROUND});

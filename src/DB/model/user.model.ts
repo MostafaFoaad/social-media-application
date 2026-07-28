@@ -97,8 +97,6 @@ userSchema.pre(["deleteOne","findOneAndDelete"],function(){
 
 userSchema.pre("save",async function(this:HydratedDocument<IUser>&{wasNew:boolean}) {
     this.wasNew=this.isNew
-    console.log("pre one",this);
-    console.log(this.isNew)
     if(this.isModified("password")){
         this.password=await generateHash({plaintext:this.password})
     }
@@ -110,7 +108,6 @@ userSchema.pre("save",async function(this:HydratedDocument<IUser>&{wasNew:boolea
 
 userSchema.post("save",async function(){
     const that=this as HydratedDocument<IUser>&{wasNew:boolean};
-    console.log({post:that.wasNew})
 })
 
 

@@ -77,10 +77,10 @@ export class S3Service{
             },
             partSize:partSize*1024*1024
         })
-        uploadFile.on("httpUploadProgress",(progress)=>{
+        /* uploadFile.on("httpUploadProgress",(progress)=>{
             console.log(progress);
             console.log(`FILE UPLOAD IS ${((progress.loaded as number)/(progress.total as number))*100}%`)
-        })
+        }) */
         return await uploadFile.done()
 
         }

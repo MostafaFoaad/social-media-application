@@ -76,7 +76,6 @@ switch(tokenType){
         throw new BadException('MISSING TOKEN AUDIENCE');
     }
     const [tokenApproach,level]=decoded.aud;
-    console.log({tokenApproach,level})
     if(tokenApproach==undefined||level==undefined){
         throw new BadException('MISSING TOKEN AUDIENCE');
     }
@@ -93,7 +92,6 @@ switch(tokenType){
     const verifiedData=await this.verify({token,secret})
 
     const user=await this.userRepository.findOne({filter:{_id:verifiedData.sub}})
-    console.log({decoded,verifiedData})
     if (!user) {
         throw new NotFoundException('USER CANNOT BE FOUND');
     }

@@ -18,7 +18,7 @@ export class RedisService{
 
     public async connect(){
         await this.client.connect();
-        console.log("REDIS DATABASE CONNECTED SUCCESSFULLY");
+        console.log("THE REDIS DATABASE CONNECTED SUCCESSFULLY");
     }
 
     

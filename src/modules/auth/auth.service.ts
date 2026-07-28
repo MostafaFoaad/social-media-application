@@ -174,7 +174,6 @@ class AuthenticationService{
 
      async loginWithGmail(idToken:string,issuer:string){
         const payLoad= await this.verifyGoogleAccount(idToken);
-        console.log(payLoad);
         const user=await this.userRepository. findOne({
             filter:{email:payLoad.email as string , provider:ProviderEnum.GOOGLE}
      })
@@ -187,7 +186,6 @@ class AuthenticationService{
 
      async signupWithGmail(idToken:string,issuer:string){
         const payLoad= await this.verifyGoogleAccount(idToken);
-        console.log(payLoad);
         const checkExist=await this.userRepository.findOne({
             filter:{email:payLoad.email as string}
         })
